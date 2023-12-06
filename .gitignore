@@ -38,3 +38,6 @@ next-env.d.ts
 
 # docker files
 data/
+
+# drizzle auto generated files
+drizzle/
