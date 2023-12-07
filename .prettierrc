@@ -12,6 +12,7 @@
   "bracketSameLine": false,
   "proseWrap": "preserve",
   "plugins": [
-    "prettier-plugin-tailwindcss"
+    "prettier-plugin-tailwindcss",
+    "prettier-plugin-organize-imports"
   ]
 }
