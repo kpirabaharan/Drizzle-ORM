@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm';
 import { integer, pgTable, serial, text, varchar } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
@@ -7,6 +8,18 @@ export const users = pgTable('users', {
   address: varchar('address', { length: 256 }),
   score: integer('score'),
 });
+
+export const profiles = pgTable('profiles', {
+  id: serial('id').primaryKey(),
+  bio: varchar('bio', { length: 256 }),
+  userId: integer('user_id')
+    .notNull()
+    .references(() => users.id),
+});
+
+export const userRelations = relations(users, ({ one }) => ({
+  profile: one(profiles, { fields: [users.id], references: [profiles.userId] }),
+}));
 
 // const ints = pgTable('ints', {
 //   qty: smallint('qty'),

@@ -1,14 +1,17 @@
 import { db } from '@/db';
-import { users } from '@/db/schema';
-import { and } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
 export const GET = async () => {
-  const result = await db
-    .select()
-    .from(users)
-    .where(and(users.score, 95))
-    .execute();
+  // const result = await db
+  //   .select()
+  //   .from(users)
+  //   .where(gt(users.score, 95))
+  //   .execute();
+
+  // Get User with Profile
+  const result = await db.query.users.findFirst({
+    with: { profile: true },
+  });
 
   return NextResponse.json(result);
 };
