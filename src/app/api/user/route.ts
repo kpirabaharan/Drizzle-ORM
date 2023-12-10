@@ -8,9 +8,14 @@ export const GET = async () => {
   //   .where(gt(users.score, 95))
   //   .execute();
 
-  // Get User with Profile
-  const result = await db.query.users.findFirst({
-    with: { profile: true },
+  // Get User with Profile and Post
+  // const result = await db.query.users.findFirst({
+  //   with: { profile: true, posts: true },
+  // });
+
+  // Get First Post with Author
+  const result = await db.query.posts.findFirst({
+    with: { author: true },
   });
 
   return NextResponse.json(result);

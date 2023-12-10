@@ -9,6 +9,11 @@ export const users = pgTable('users', {
   score: integer('score'),
 });
 
+export const userRelations = relations(users, ({ one, many }) => ({
+  profile: one(profiles, { fields: [users.id], references: [profiles.userId] }),
+  posts: many(posts),
+}));
+
 export const profiles = pgTable('profiles', {
   id: serial('id').primaryKey(),
   bio: varchar('bio', { length: 256 }),
@@ -17,8 +22,16 @@ export const profiles = pgTable('profiles', {
     .references(() => users.id),
 });
 
-export const userRelations = relations(users, ({ one }) => ({
-  profile: one(profiles, { fields: [users.id], references: [profiles.userId] }),
+export const posts = pgTable('posts', {
+  id: serial('id').primaryKey(),
+  text: varchar('text', { length: 256 }),
+  authorId: integer('author_id')
+    .notNull()
+    .references(() => users.id),
+});
+
+export const postRelations = relations(posts, ({ one }) => ({
+  author: one(users, { fields: [posts.authorId], references: [users.id] }),
 }));
 
 // const ints = pgTable('ints', {
