@@ -15,7 +15,11 @@ export const GET = async () => {
 
   // Get First Post with Author
   const result = await db.query.posts.findFirst({
-    with: { author: true },
+    with: { author: true, postCategories: true },
+  });
+
+  const result2 = await db.query.categories.findFirst({
+    with: { posts: true },
   });
 
   return NextResponse.json(result);

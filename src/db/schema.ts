@@ -1,5 +1,12 @@
 import { relations } from 'drizzle-orm';
-import { integer, pgTable, serial, text, varchar } from 'drizzle-orm/pg-core';
+import {
+  integer,
+  pgTable,
+  primaryKey,
+  serial,
+  text,
+  varchar,
+} from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
@@ -30,9 +37,50 @@ export const posts = pgTable('posts', {
     .references(() => users.id),
 });
 
-export const postRelations = relations(posts, ({ one }) => ({
+export const postRelations = relations(posts, ({ one, many }) => ({
   author: one(users, { fields: [posts.authorId], references: [users.id] }),
+  postCategories: many(postOnCategories),
 }));
+
+export const categories = pgTable('categories', {
+  id: serial('id').primaryKey(),
+  name: varchar('name', { length: 256 }),
+});
+
+export const categoryRelations = relations(categories, ({ many }) => ({
+  posts: many(postOnCategories),
+}));
+
+export const postOnCategories = pgTable(
+  'post categories',
+  {
+    postId: integer('post_id')
+      .notNull()
+      .references(() => posts.id),
+    categoryId: integer('category_id')
+      .notNull()
+      .references(() => categories.id),
+  },
+  t => ({
+    pk: primaryKey(t.postId, t.categoryId),
+  }),
+);
+
+export const postOnCategoryRelations = relations(
+  postOnCategories,
+  ({ one }) => ({
+    post: one(posts, {
+      fields: [postOnCategories.postId],
+      references: [posts.id],
+    }),
+    category: one(categories, {
+      fields: [postOnCategories.categoryId],
+      references: [categories.id],
+    }),
+  }),
+);
+
+// ! Is there an easier way to do many-to-many?
 
 // const ints = pgTable('ints', {
 //   qty: smallint('qty'),
