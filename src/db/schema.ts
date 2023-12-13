@@ -26,7 +26,7 @@ export const profiles = pgTable('profiles', {
   bio: varchar('bio', { length: 256 }),
   userId: integer('user_id')
     .notNull()
-    .references(() => users.id),
+    .references(() => users.id, { onDelete: 'cascade' }),
 });
 
 export const posts = pgTable('posts', {
@@ -66,7 +66,7 @@ export const postToCategories = pgTable(
   }),
 );
 
-export const postOnCategoryRelations = relations(
+export const postToCategoryRelations = relations(
   postToCategories,
   ({ one }) => ({
     post: one(posts, {
