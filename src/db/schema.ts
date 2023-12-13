@@ -39,7 +39,7 @@ export const posts = pgTable('posts', {
 
 export const postRelations = relations(posts, ({ one, many }) => ({
   author: one(users, { fields: [posts.authorId], references: [users.id] }),
-  postCategories: many(postOnCategories),
+  postCategories: many(postToCategories),
 }));
 
 export const categories = pgTable('categories', {
@@ -48,11 +48,11 @@ export const categories = pgTable('categories', {
 });
 
 export const categoryRelations = relations(categories, ({ many }) => ({
-  posts: many(postOnCategories),
+  posts: many(postToCategories),
 }));
 
-export const postOnCategories = pgTable(
-  'post categories',
+export const postToCategories = pgTable(
+  'post_to_categories',
   {
     postId: integer('post_id')
       .notNull()
@@ -62,25 +62,23 @@ export const postOnCategories = pgTable(
       .references(() => categories.id),
   },
   t => ({
-    pk: primaryKey(t.postId, t.categoryId),
+    pk: primaryKey({ columns: [t.postId, t.categoryId] }),
   }),
 );
 
 export const postOnCategoryRelations = relations(
-  postOnCategories,
+  postToCategories,
   ({ one }) => ({
     post: one(posts, {
-      fields: [postOnCategories.postId],
+      fields: [postToCategories.postId],
       references: [posts.id],
     }),
     category: one(categories, {
-      fields: [postOnCategories.categoryId],
+      fields: [postToCategories.categoryId],
       references: [categories.id],
     }),
   }),
 );
-
-// ! Is there an easier way to do many-to-many?
 
 // const ints = pgTable('ints', {
 //   qty: smallint('qty'),
